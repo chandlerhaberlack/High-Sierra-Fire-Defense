@@ -4,13 +4,13 @@ export function JsonLd() {
     "@type": "Organization",
     name: "High Sierra Fire Defense",
     description:
-      "An intelligent exterior wildfire defense system for mountain homes in Reno, Tahoe, Truckee, and the Sierra Nevada foothills.",
+      "An intelligent exterior wildfire defense system for mountain homes in Reno, Tahoe, Truckee, and Northern Nevada.",
     url: "https://highsierrafiredefense.com",
     areaServed: [
       { "@type": "City", name: "Reno", containedInPlace: { "@type": "State", name: "Nevada" } },
       { "@type": "City", name: "Truckee", containedInPlace: { "@type": "State", name: "California" } },
       { "@type": "Place", name: "Lake Tahoe" },
-      { "@type": "Place", name: "Sierra Nevada Foothills" },
+      { "@type": "Place", name: "Northern Nevada" },
     ],
     knowsAbout: [
       "Wildfire defense",
@@ -24,9 +24,9 @@ export function JsonLd() {
   const webPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "High Sierra Fire Defense | Wildfire Defense for Reno, Tahoe & Sierra Foothill Homes",
+    name: "High Sierra Fire Defense | Wildfire Defense for Reno, Tahoe & Northern Nevada",
     description:
-      "An intelligent exterior wildfire defense system for mountain homes in Reno, Tahoe, Truckee, and the Sierra Nevada. Join the early access list.",
+      "An intelligent exterior wildfire defense system for mountain homes in Reno, Tahoe, Truckee, and Northern Nevada. Join the early access list.",
     about: {
       "@type": "Thing",
       name: "Residential wildfire mitigation and exterior pre-wetting systems",
@@ -58,7 +58,7 @@ export function JsonLd() {
         name: "What areas does High Sierra Fire Defense serve?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The system is being developed for homeowners in Reno, Tahoe, Truckee, Carson Valley, Galena, Somersett, Verdi, Incline Village, South Lake Tahoe, and nearby Sierra Nevada foothill communities.",
+          text: "The system is being developed for homeowners in Reno, Lake Tahoe, Truckee, and nearby Northern Nevada communities.",
         },
       },
     ],

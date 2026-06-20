@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Fraunces } from "next/font/google";
 import { JsonLd } from "@/components/JsonLd";
 import "./globals.css";
 
@@ -8,9 +8,10 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
+  axes: ["opsz", "SOFT"],
 });
 
 const siteUrl = "https://highsierrafiredefense.com";
@@ -18,9 +19,9 @@ const siteUrl = "https://highsierrafiredefense.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title:
-    "High Sierra Fire Defense | Wildfire Defense for Reno, Tahoe & Sierra Foothill Homes",
+    "High Sierra Fire Defense | Wildfire Defense for Reno, Tahoe & Northern Nevada",
   description:
-    "An intelligent exterior wildfire defense system for mountain homes in Reno, Tahoe, Truckee, and the Sierra Nevada. Join the early access list for updates and pilot opportunities.",
+    "An intelligent exterior wildfire defense system for mountain homes in Reno, Tahoe, Truckee, and Northern Nevada. Join the early access list for updates and pilot opportunities.",
   keywords: [
     "wildfire defense Reno",
     "wildfire sprinkler system Tahoe",
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title:
-      "High Sierra Fire Defense | Wildfire Defense for Reno, Tahoe & Sierra Foothill Homes",
+      "High Sierra Fire Defense | Wildfire Defense for Reno, Tahoe & Northern Nevada",
     description:
       "An intelligent exterior water-defense system for mountain homes exposed to ember storms, wind-driven fires, and evacuation uncertainty.",
     url: siteUrl,
@@ -45,9 +46,9 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/images/hero-bg.jpg",
-        width: 1920,
-        height: 1080,
-        alt: "Sierra Nevada mountain home exterior wildfire defense system concept",
+        width: 2000,
+        height: 1333,
+        alt: "Pine forest and granite near Lake Tahoe and Reno, Northern Nevada",
       },
     ],
     locale: "en_US",
@@ -57,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "High Sierra Fire Defense | Wildfire Defense for Mountain Homes",
     description:
-      "Intelligent exterior water-defense system for Reno, Tahoe, Truckee, and Sierra foothill homes.",
+      "Intelligent exterior water-defense system for Reno, Tahoe, Truckee, and Northern Nevada.",
     images: ["/images/hero-bg.jpg"],
   },
   robots: {
@@ -72,7 +73,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable} scroll-smooth`}>
+    <html lang="en" className={`${inter.variable} ${fraunces.variable} scroll-smooth`}>
       <head>
         <JsonLd />
       </head>

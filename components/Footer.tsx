@@ -2,67 +2,44 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="border-t border-surface-border bg-background/80">
-      <div className="mx-auto max-w-6xl px-6 py-12 lg:px-8">
-        <div className="grid gap-8 md:grid-cols-3">
+    <footer className="border-t border-ink bg-paper-2">
+      <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded border border-teal/40 bg-teal/10">
-                <svg
-                  viewBox="0 0 24 24"
-                  className="h-3.5 w-3.5 text-teal"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
-              <span className="font-display text-sm font-semibold text-foreground">
-                High Sierra Fire Defense
+            <div className="flex items-baseline gap-2">
+              <span className="font-display text-lg font-semibold text-ink">High Sierra</span>
+              <span className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-ember">
+                Fire Defense
               </span>
             </div>
-            <p className="mt-3 text-sm text-muted leading-relaxed">
-              Wildfire defense system currently in development.
+            <p className="mt-2 text-sm text-ink-muted">
+              Wildfire defense system — concept in development.
+            </p>
+            <p className="mt-1 text-sm text-ink-muted">
+              Reno · Lake Tahoe · Truckee · Northern Nevada
             </p>
           </div>
 
-          <div>
-            <h3 className="font-mono text-xs uppercase tracking-widest text-muted mb-3">
-              Service Area
-            </h3>
-            <p className="text-sm text-muted leading-relaxed">
-              Reno, Tahoe, Truckee, Northern Nevada, Sierra Nevada foothills
-            </p>
-          </div>
-
-          <div>
-            <h3 className="font-mono text-xs uppercase tracking-widest text-muted mb-3">
-              Early Access
-            </h3>
-            <Link
-              href="#waitlist"
-              className="text-sm text-teal hover:text-teal/80 transition-colors"
-            >
-              Join the early access list →
-            </Link>
-          </div>
+          <Link
+            href="#signup"
+            className="shrink-0 text-sm font-medium text-ember hover:text-ember-hover"
+          >
+            Join the early access list →
+          </Link>
         </div>
 
-        <div className="mt-10 border-t border-surface-border pt-8">
-          <p className="text-xs text-muted/70 leading-relaxed max-w-3xl">
-            <strong className="text-muted">Disclaimer:</strong> This system is
-            intended to support wildfire mitigation and exterior pre-wetting. It
-            does not guarantee structure survival and is not a replacement for
-            defensible space, home hardening, evacuation planning, or guidance
-            from fire professionals.
-          </p>
-          <p className="mt-4 text-xs text-muted/50">
-            © {new Date().getFullYear()} High Sierra Fire Defense. All rights
-            reserved.
-          </p>
-        </div>
+        <div className="rule my-8" />
+
+        <p className="max-w-3xl text-xs leading-relaxed text-ink-muted">
+          <strong className="text-ink">Disclaimer:</strong> This system is intended
+          to support wildfire mitigation and exterior pre-wetting. It does not
+          guarantee structure survival and is not a replacement for defensible
+          space, home hardening, evacuation planning, or guidance from fire
+          professionals.
+        </p>
+        <p className="mt-4 text-xs text-ink-muted/70">
+          © {new Date().getFullYear()} High Sierra Fire Defense.
+        </p>
       </div>
     </footer>
   );

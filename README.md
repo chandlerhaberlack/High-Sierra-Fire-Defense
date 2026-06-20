@@ -1,6 +1,6 @@
 # High Sierra Fire Defense
 
-Early-access landing page for an intelligent exterior wildfire defense system serving Reno, Tahoe, Truckee, and Sierra Nevada foothill communities.
+Early-access landing page for an intelligent exterior wildfire defense system serving Reno, Tahoe, Truckee, and Northern Nevada.
 
 ## Stack
 
