@@ -6,7 +6,7 @@ export function SignupForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const formId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
+  const formId = process.env.NEXT_PUBLIC_FORMSPREE_ID ?? "meewyvkr";
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
