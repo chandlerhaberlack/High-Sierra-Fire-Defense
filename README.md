@@ -23,9 +23,8 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Formspree Setup
 
 1. Create a free account at [formspree.io](https://formspree.io)
-2. Create a new form
-3. Copy the form ID (the segment after `/f/` in the endpoint URL)
-4. Set `NEXT_PUBLIC_FORMSPREE_ID` in `.env.local`
+2. Form endpoint: `https://formspree.io/f/meewyvkr`
+3. Set `NEXT_PUBLIC_FORMSPREE_ID=meewyvkr` in `.env.local` (see `.env.local.example`)
 
 ## Production Build
 
