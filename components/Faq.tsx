@@ -9,7 +9,7 @@ export function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <Section id="faq">
+    <Section id="faq" glow="right">
       <p className="index-label">05 / Questions</p>
       <h2 className="mt-4 max-w-xl font-display text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl">
         Straight answers.

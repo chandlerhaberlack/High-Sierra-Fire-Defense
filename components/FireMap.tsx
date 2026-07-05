@@ -48,11 +48,11 @@ function tintStyle(map: maplibregl.Map) {
   for (const layer of style.layers) {
     try {
       if (layer.type === "background") {
-        map.setPaintProperty(layer.id, "background-color", "#14110e");
+        map.setPaintProperty(layer.id, "background-color", "#1e1915");
       } else if (layer.type === "fill" && /water/i.test(layer.id)) {
-        map.setPaintProperty(layer.id, "fill-color", "#1a2530");
+        map.setPaintProperty(layer.id, "fill-color", "#243342");
       } else if (layer.type === "fill" && /(land|park|grass|wood|forest)/i.test(layer.id)) {
-        map.setPaintProperty(layer.id, "fill-color", "#191510");
+        map.setPaintProperty(layer.id, "fill-color", "#241e17");
       }
     } catch {
       /* layer may not support the property — skip */
@@ -78,8 +78,10 @@ export function FireMap() {
       bounds: BOUNDS,
       fitBoundsOptions: { padding: 24 },
       maxBounds: MAX_BOUNDS,
-      minZoom: 7.5,
+      minZoom: 7,
       attributionControl: { compact: true },
+      /* One-finger swipe scrolls the page; two fingers pan the map. */
+      cooperativeGestures: true,
     });
     mapRef.current = map;
 
@@ -248,8 +250,10 @@ export function FireMap() {
         </div>
       </div>
 
-      <div className="plate-glow relative min-h-[440px] overflow-hidden md:h-[65vh] md:max-h-[680px] md:min-h-[540px]">
-        <div ref={containerRef} className="absolute inset-0 h-full w-full" />
+      {/* Explicit height at every breakpoint: maplibre forces the container to
+          position:relative, so its h-full needs a resolvable parent height. */}
+      <div className="plate-glow relative h-[440px] overflow-hidden md:h-[65vh] md:max-h-[680px] md:min-h-[540px]">
+        <div ref={containerRef} className="h-full w-full" />
 
         {status !== "ready" && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-paper-2/85 px-6 text-center">

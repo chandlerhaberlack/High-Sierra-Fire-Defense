@@ -4,7 +4,7 @@ import { site, regionCards } from "@/lib/site";
 
 export function LocalFocus() {
   return (
-    <Section id="region" wide>
+    <Section id="region" wide glow="left">
       <p className="index-label">04 / Region</p>
       <h2 className="mt-4 max-w-2xl font-display text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl">
         Built for {site.region.label}.

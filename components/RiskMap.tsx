@@ -14,7 +14,7 @@ const FireMap = dynamic(() => import("./FireMap").then((m) => m.FireMap), {
 
 export function RiskMap() {
   return (
-    <Section id="fire-history" wide>
+    <Section id="fire-history" wide glow="right">
       <p className="index-label">01 / The Threat</p>
       <h2 className="mt-4 max-w-2xl font-display text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl">
         This is your neighborhood&apos;s fire history.

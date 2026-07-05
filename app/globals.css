@@ -53,6 +53,19 @@ body {
   background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232, 90, 36, 0.18) 0%, transparent 70%);
 }
 
+.ember-glow-bottom {
+  background: radial-gradient(ellipse 80% 70% at 50% 100%, rgba(232, 90, 36, 0.2) 0%, transparent 70%);
+}
+
+/* Faint, off-center washes that carry the ember theme between hero and CTA. */
+.ember-haze-left {
+  background: radial-gradient(ellipse 55% 65% at 12% 30%, rgba(232, 90, 36, 0.07) 0%, transparent 70%);
+}
+
+.ember-haze-right {
+  background: radial-gradient(ellipse 55% 65% at 88% 30%, rgba(232, 90, 36, 0.07) 0%, transparent 70%);
+}
+
 .index-label {
   font-family: var(--font-inter), monospace;
   font-size: 0.6875rem;
@@ -162,4 +175,11 @@ body {
 
 .maplibregl-ctrl-group button {
   filter: invert(0.85);
+}
+
+.maplibregl-cooperative-gesture-screen {
+  background: rgba(13, 11, 9, 0.75) !important;
+  color: var(--ink) !important;
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+  font-size: 0.875rem !important;
 }

@@ -21,7 +21,7 @@ const steps = [
 
 export function SystemOverview() {
   return (
-    <Section id="how-it-works" contour wide>
+    <Section id="how-it-works" contour wide glow="left">
       <p className="index-label">02 / How It Works</p>
       <h2 className="mt-4 max-w-2xl font-display text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl">
         It defends in the direction of the fire.

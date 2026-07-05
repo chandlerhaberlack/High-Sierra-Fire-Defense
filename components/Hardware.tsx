@@ -4,7 +4,7 @@ import { hardwareSpecs } from "@/lib/site";
 
 export function Hardware() {
   return (
-    <Section id="hardware" wide>
+    <Section id="hardware" wide glow="right">
       <p className="index-label">03 / The Hardware</p>
       <h2 className="mt-4 max-w-2xl font-display text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl">
         Simple parts. No grid required.
