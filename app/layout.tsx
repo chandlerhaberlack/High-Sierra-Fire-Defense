@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Fraunces } from "next/font/google";
 import { JsonLd } from "@/components/JsonLd";
+import { site } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -14,35 +15,17 @@ const fraunces = Fraunces({
   axes: ["opsz", "SOFT"],
 });
 
-const siteUrl = "https://highsierrafiredefense.com";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title:
-    "High Sierra Fire Defense | Wildfire Defense for Reno, Tahoe & Northern Nevada",
-  description:
-    "An intelligent exterior wildfire defense system for mountain homes in Reno, Tahoe, Truckee, and Northern Nevada. Join the early access list for updates and pilot opportunities.",
-  keywords: [
-    "wildfire defense Reno",
-    "wildfire sprinkler system Tahoe",
-    "wildfire sprinkler system Reno",
-    "home wildfire protection Reno",
-    "home wildfire protection Tahoe",
-    "exterior wildfire sprinkler system",
-    "wildfire mitigation system Nevada",
-    "defensible space water system",
-    "smart wildfire defense system",
-    "roof sprinkler wildfire system",
-    "home wildfire protection Truckee",
-    "exterior wildfire mitigation Nevada",
-  ],
+  metadataBase: new URL(site.url),
+  title: site.title,
+  description: site.description,
+  keywords: [...site.keywords],
   openGraph: {
-    title:
-      "High Sierra Fire Defense | Wildfire Defense for Reno, Tahoe & Northern Nevada",
+    title: site.title,
     description:
       "An intelligent exterior water-defense system for mountain homes exposed to ember storms, wind-driven fires, and evacuation uncertainty.",
-    url: siteUrl,
-    siteName: "High Sierra Fire Defense",
+    url: site.url,
+    siteName: site.name,
     images: [
       {
         url: "/images/hero-bg.jpg",
@@ -56,9 +39,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "High Sierra Fire Defense | Wildfire Defense for Mountain Homes",
-    description:
-      "Intelligent exterior water-defense system for Reno, Tahoe, Truckee, and Northern Nevada.",
+    title: site.titleShort,
+    description: `Intelligent exterior water-defense system for ${site.region.label}.`,
     images: ["/images/hero-bg.jpg"],
   },
   robots: {

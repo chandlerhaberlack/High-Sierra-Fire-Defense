@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Logo } from "./Logo";
+import { site } from "@/lib/site";
 
 export function Footer() {
   return (
@@ -6,17 +8,12 @@ export function Footer() {
       <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="flex items-baseline gap-2">
-              <span className="font-display text-lg font-semibold text-ink">High Sierra</span>
-              <span className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-ember">
-                Fire Defense
-              </span>
-            </div>
+            <Logo />
             <p className="mt-2 text-sm text-ink-muted">
-              Wildfire defense system — concept in development.
+              Exterior wildfire defense for mountain homes — concept in development.
             </p>
             <p className="mt-1 text-sm text-ink-muted">
-              Reno · Lake Tahoe · Truckee · Northern Nevada
+              {site.region.places.join(" · ")}
             </p>
           </div>
 
@@ -38,7 +35,7 @@ export function Footer() {
           professionals.
         </p>
         <p className="mt-4 text-xs text-ink-muted/70">
-          © {new Date().getFullYear()} High Sierra Fire Defense.
+          © {new Date().getFullYear()} {site.name}.
         </p>
       </div>
     </footer>

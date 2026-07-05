@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { site } from "@/lib/site";
 import { SignupForm } from "./SignupForm";
 
 export function Hero() {
@@ -15,7 +16,7 @@ export function Hero() {
             <p className="index-label">Early Access · Concept in Development</p>
 
             <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.06] tracking-tight text-ink sm:text-5xl lg:text-[3rem]">
-              Wildfire defense for the modern mountain home.
+              {site.tagline}
             </h1>
 
             <p className="mt-5 max-w-lg text-[1.0625rem] leading-relaxed text-ink-muted">
@@ -30,7 +31,7 @@ export function Hero() {
             </div>
 
             <p className="mt-3 text-xs text-ink-muted">
-              Updates &amp; pilot opportunities for Reno, Tahoe &amp; Northern Nevada. No spam.
+              Updates &amp; pilot opportunities for {site.region.label}. No spam.
             </p>
 
             <Link
@@ -50,7 +51,7 @@ export function Hero() {
             >
               <Image
                 src="/images/hero-bg.jpg"
-                alt="Ponderosa pine forest at sunset with smoky golden light near Lake Tahoe, Northern Nevada — Sierra wildfire terrain"
+                alt="Ponderosa pine forest at sunset with smoky golden light near Lake Tahoe, Northern Nevada — mountain wildfire terrain"
                 fill
                 priority
                 className="object-cover object-center"
@@ -58,7 +59,7 @@ export function Hero() {
               />
             </div>
             <figcaption className="mt-2 flex items-center justify-between text-[0.625rem] uppercase tracking-[0.15em] text-ink-muted">
-              <span>Lake Tahoe · Reno · Truckee</span>
+              <span>{site.region.caption}</span>
               <span>Northern Nevada</span>
             </figcaption>
           </figure>
@@ -80,7 +81,7 @@ export function Hero() {
             />
           </div>
           <figcaption className="mt-2 flex items-center justify-between text-[0.625rem] uppercase tracking-[0.15em] text-ink-muted">
-            <span>Lake Tahoe · Reno · Truckee</span>
+            <span>{site.region.caption}</span>
             <span>Northern Nevada</span>
           </figcaption>
         </figure>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { site } from "@/lib/site";
 
 export function SignupForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -61,7 +62,7 @@ export function SignupForm() {
       <input
         type="hidden"
         name="_subject"
-        value="High Sierra Fire Defense — Early Access Signup"
+        value={`${site.name} — Early Access Signup`}
       />
 
       <div>

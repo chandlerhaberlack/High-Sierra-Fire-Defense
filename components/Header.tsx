@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Logo } from "./Logo";
 
 const navLinks = [
   { label: "How It Works", href: "#how-it-works" },
@@ -15,12 +16,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur-sm">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4 lg:px-8">
         <Link href="/" className="flex items-baseline gap-2">
-          <span className="font-display text-lg font-semibold tracking-tight text-ink">
-            High Sierra
-          </span>
-          <span className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-ember">
-            Fire Defense
-          </span>
+          <Logo />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">

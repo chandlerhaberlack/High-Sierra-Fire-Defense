@@ -1,11 +1,12 @@
+import { site } from "@/lib/site";
+
 export function JsonLd() {
   const organization = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "High Sierra Fire Defense",
-    description:
-      "An intelligent exterior wildfire defense system for mountain homes in Reno, Tahoe, Truckee, and Northern Nevada.",
-    url: "https://highsierrafiredefense.com",
+    name: site.name,
+    description: site.shortDescription,
+    url: site.url,
     areaServed: [
       { "@type": "City", name: "Reno", containedInPlace: { "@type": "State", name: "Nevada" } },
       { "@type": "City", name: "Truckee", containedInPlace: { "@type": "State", name: "California" } },
@@ -24,9 +25,8 @@ export function JsonLd() {
   const webPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "High Sierra Fire Defense | Wildfire Defense for Reno, Tahoe & Northern Nevada",
-    description:
-      "An intelligent exterior wildfire defense system for mountain homes in Reno, Tahoe, Truckee, and Northern Nevada. Join the early access list.",
+    name: site.title,
+    description: `${site.shortDescription} Join the early access list.`,
     about: {
       "@type": "Thing",
       name: "Residential wildfire mitigation and exterior pre-wetting systems",
@@ -42,7 +42,7 @@ export function JsonLd() {
         name: "Is this an interior fire sprinkler system?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "No. High Sierra Fire Defense is an exterior wildfire mitigation system designed for roofline, eave, and perimeter pre-wetting. It is not an interior fire suppression sprinkler system.",
+          text: `No. ${site.name} is an exterior wildfire mitigation system designed for roofline, eave, and perimeter pre-wetting. It is not an interior fire suppression sprinkler system.`,
         },
       },
       {
@@ -55,7 +55,7 @@ export function JsonLd() {
       },
       {
         "@type": "Question",
-        name: "What areas does High Sierra Fire Defense serve?",
+        name: `What areas does ${site.name} serve?`,
         acceptedAnswer: {
           "@type": "Answer",
           text: "The system is being developed for homeowners in Reno, Lake Tahoe, Truckee, and nearby Northern Nevada communities.",
