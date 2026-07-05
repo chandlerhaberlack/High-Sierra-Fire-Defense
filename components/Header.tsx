@@ -5,7 +5,9 @@ import Link from "next/link";
 import { Logo } from "./Logo";
 
 const navLinks = [
+  { label: "Fire History", href: "#fire-history" },
   { label: "How It Works", href: "#how-it-works" },
+  { label: "Hardware", href: "#hardware" },
   { label: "Region", href: "#region" },
 ];
 
@@ -13,13 +15,13 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4 lg:px-8">
-        <Link href="/" className="flex items-baseline gap-2">
-          <Logo />
+    <header className="sticky top-0 z-50 border-b border-line/60 bg-void/85 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5 lg:px-8">
+        <Link href="/" className="flex items-center">
+          <Logo size="sm" />
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-7 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -31,7 +33,7 @@ export function Header() {
           ))}
           <Link
             href="#signup"
-            className="bg-ember px-4 py-2 text-xs font-medium tracking-wide text-paper transition-colors hover:bg-ember-hover"
+            className="bg-ember px-4 py-2 text-xs font-semibold uppercase tracking-wider text-void transition-colors hover:bg-ember-hover"
           >
             Early Access
           </Link>
@@ -40,7 +42,7 @@ export function Header() {
         <div className="flex items-center gap-3 md:hidden">
           <Link
             href="#signup"
-            className="bg-ember px-3 py-2 text-xs font-medium text-paper"
+            className="bg-ember px-3 py-2 text-xs font-semibold text-void"
           >
             Join
           </Link>
@@ -68,7 +70,7 @@ export function Header() {
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="block py-2 text-sm text-ink-muted hover:text-ink"
+              className="block py-2.5 text-sm text-ink-muted hover:text-ink"
             >
               {link.label}
             </Link>

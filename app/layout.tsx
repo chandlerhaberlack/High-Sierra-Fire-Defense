@@ -20,18 +20,19 @@ export const metadata: Metadata = {
   title: site.title,
   description: site.description,
   keywords: [...site.keywords],
+  alternates: { canonical: "/" },
+  icons: { icon: "/icon.svg" },
   openGraph: {
     title: site.title,
-    description:
-      "An intelligent exterior water-defense system for mountain homes exposed to ember storms, wind-driven fires, and evacuation uncertainty.",
+    description: site.shortDescription,
     url: site.url,
     siteName: site.name,
     images: [
       {
-        url: "/images/hero-bg.jpg",
-        width: 2000,
-        height: 1333,
-        alt: "Pine forest and granite near Lake Tahoe and Reno, Northern Nevada",
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "EmberX Defense — wildfire defense system for Reno, Lake Tahoe, and Truckee",
       },
     ],
     locale: "en_US",
@@ -40,8 +41,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: site.titleShort,
-    description: `Intelligent exterior water-defense system for ${site.region.label}.`,
-    images: ["/images/hero-bg.jpg"],
+    description: site.shortDescription,
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,

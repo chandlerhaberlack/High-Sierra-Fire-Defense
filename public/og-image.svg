@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0d0b09"/>
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#e85a24" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0d0b09" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <g transform="translate(80, 200)">
+    <path d="M60 10L110 35V85L60 110L10 85V35L60 10Z" stroke="#e85a24" stroke-width="2" fill="#1c1814"/>
+    <path d="M40 35L80 85M80 35L40 85" stroke="#e85a24" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="60" cy="60" r="6" fill="#ff7a3d"/>
+  </g>
+  <text x="220" y="280" font-family="Georgia, serif" font-size="72" font-weight="600" fill="#f0ebe3">EmberX</text>
+  <text x="220" y="340" font-family="system-ui, sans-serif" font-size="28" font-weight="600" letter-spacing="8" fill="#e85a24">DEFENSE</text>
+  <text x="220" y="420" font-family="system-ui, sans-serif" font-size="26" fill="#8a8070">Wildfire defense for Reno, Tahoe &amp; Truckee</text>
+</svg>

@@ -1,21 +1,23 @@
 @import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
 
-/*
-  Palette: dark warm wood — halfway between cream paper and near-black charcoal.
-  The brown undertone is the differentiator. No cool-gray, no pure black.
-*/
 :root {
-  --paper:      #27211a;  /* page background — dark warm brown */
-  --paper-2:    #302920;  /* elevated surfaces */
-  --paper-3:    #3a3228;  /* card hover, inset panels */
-  --ink:        #e8e2d4;  /* primary text — warm off-white */
-  --ink-muted:  #7a7060;  /* secondary text */
-  --line:       #4a4236;  /* borders and dividers */
-  --ember:      #c94b1f;  /* sole accent — ember red */
-  --ember-hover:#a83a16;
+  --void:       #0d0b09;
+  --paper:      #14110e;
+  --paper-2:    #1c1814;
+  --paper-3:    #252019;
+  --ink:        #f0ebe3;
+  --ink-muted:  #8a8070;
+  --line:       #3a3228;
+  --ember:      #e85a24;
+  --ember-glow: #ff7a3d;
+  --ember-hover:#c94b1f;
+  --ember-dim:  rgba(232, 90, 36, 0.12);
+  --pulse:      #f0a23c;
 }
 
 @theme inline {
+  --color-void:        var(--void);
   --color-paper:       var(--paper);
   --color-paper-2:     var(--paper-2);
   --color-paper-3:     var(--paper-3);
@@ -23,7 +25,10 @@
   --color-ink-muted:   var(--ink-muted);
   --color-line:        var(--line);
   --color-ember:       var(--ember);
+  --color-ember-glow:  var(--ember-glow);
   --color-ember-hover: var(--ember-hover);
+  --color-ember-dim:   var(--ember-dim);
+  --color-pulse:       var(--pulse);
   --font-sans:         var(--font-inter);
   --font-display:      var(--font-fraunces);
 }
@@ -33,16 +38,19 @@ html {
 }
 
 body {
-  background-color: var(--paper);
+  background-color: var(--void);
   color: var(--ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Topographic contour — faint light lines on dark background */
 .contour {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cg fill='none' stroke='%23e8e2d4' stroke-width='0.6' opacity='0.035'%3E%3Cpath d='M-50 300 C 100 200, 250 380, 400 280 S 700 320, 850 240'/%3E%3Cpath d='M-50 340 C 110 250, 260 420, 410 320 S 700 360, 850 290'/%3E%3Cpath d='M-50 380 C 120 300, 270 460, 420 360 S 700 400, 850 330'/%3E%3Cpath d='M-50 420 C 130 350, 280 500, 430 400 S 700 440, 850 380'/%3E%3Cpath d='M-50 260 C 90 170, 240 340, 390 240 S 700 280, 850 200'/%3E%3Cpath d='M-50 220 C 80 140, 230 300, 380 200 S 700 240, 850 160'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cg fill='none' stroke='%23e8e2d4' stroke-width='0.6' opacity='0.025'%3E%3Cpath d='M-50 300 C 100 200, 250 380, 400 280 S 700 320, 850 240'/%3E%3Cpath d='M-50 340 C 110 250, 260 420, 410 320 S 700 360, 850 290'/%3E%3Cpath d='M-50 380 C 120 300, 270 460, 420 360 S 700 400, 850 330'/%3E%3Cpath d='M-50 420 C 130 350, 280 500, 430 400 S 700 440, 850 380'/%3E%3Cpath d='M-50 260 C 90 170, 240 340, 390 240 S 700 280, 850 200'/%3E%3Cpath d='M-50 220 C 80 140, 230 300, 380 200 S 700 240, 850 160'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 600px 600px;
+}
+
+.ember-glow {
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232, 90, 36, 0.18) 0%, transparent 70%);
 }
 
 .index-label {
@@ -56,17 +64,7 @@ body {
 
 .rule {
   height: 1px;
-  background: var(--line);
-}
-
-.reveal {
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
+  background: linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent);
 }
 
 .plate {
@@ -74,11 +72,10 @@ body {
   background: var(--paper-2);
 }
 
-.plate-scroll {
-  border: 1px solid var(--line);
-  background: var(--paper-2);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+.plate-glow {
+  border: 1px solid rgba(232, 90, 36, 0.25);
+  background: linear-gradient(180deg, var(--paper-2) 0%, var(--paper) 100%);
+  box-shadow: 0 0 40px rgba(232, 90, 36, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .field {
@@ -89,7 +86,7 @@ body {
   border-radius: 0;
   color: var(--ink);
   font-size: 0.9375rem;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 .field::placeholder {
   color: var(--ink-muted);
@@ -98,6 +95,7 @@ body {
 .field:focus {
   outline: none;
   border-color: var(--ember);
+  box-shadow: 0 0 0 3px var(--ember-dim);
 }
 
 .field-label {
@@ -107,4 +105,61 @@ body {
   letter-spacing: 0.04em;
   color: var(--ink-muted);
   margin-bottom: 0.4rem;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ember);
+  box-shadow: 0 0 8px var(--ember-glow);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+@keyframes flow-dash {
+  to { stroke-dashoffset: -20; }
+}
+
+.flow-line {
+  stroke-dasharray: 6 4;
+  animation: flow-dash 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-dot,
+  .flow-line {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+.maplibregl-popup-content {
+  background: var(--paper-2) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 0 !important;
+  padding: 12px 14px !important;
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.maplibregl-popup-tip {
+  border-top-color: var(--paper-2) !important;
+}
+
+.maplibregl-ctrl-group {
+  background: var(--paper-2) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 0 !important;
+}
+
+.maplibregl-ctrl-group button {
+  filter: invert(0.85);
 }
