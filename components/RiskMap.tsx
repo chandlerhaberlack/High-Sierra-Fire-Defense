@@ -20,8 +20,9 @@ export function RiskMap() {
         This is your neighborhood&apos;s fire history.
       </h2>
       <p className="mt-4 max-w-2xl leading-relaxed text-ink-muted">
-        Four decades of recorded wildfires around Reno, Lake Tahoe, Truckee, and
-        Carson City. Every orange shape is ground that has already burned. Tap a
+        Every recorded wildfire since 1950 within a hundred miles of Lake Tahoe, on
+        both sides of the state line. Brighter shapes burned recently; darker ones
+        decades ago. Drag the year range to watch the pattern accelerate, and tap a
         burn area for the fire&apos;s name, year, and size — then ask how close the
         nearest one came to your street.
       </p>
