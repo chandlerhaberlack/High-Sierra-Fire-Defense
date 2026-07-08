@@ -127,7 +127,7 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
     const id = setInterval(() => {
       dirIndex.current = (dirIndex.current + 1) % 4;
       setFire(DIRECTIONS[dirIndex.current]);
-    }, 8000);
+    }, 16000);
     return () => clearInterval(id);
   }, [auto, reduced, shield]);
 
