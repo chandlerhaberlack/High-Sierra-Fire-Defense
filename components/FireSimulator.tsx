@@ -70,14 +70,14 @@ const SPRAY: Record<Direction, { dx: number; dy: number }[]> = {
 const PHASE_DURATION: Record<Phase, number> = { city: 6000, lost: 2200, reservoir: 9000 };
 
 /* Guardian standby-zone cycle (default: 1 min on every 10 min), compressed for the demo. */
-const PULSE_EVERY = 12000;
-const PULSE_FOR = 3000;
+const PULSE_EVERY = 5000;
+const PULSE_FOR = 2000;
 
 export function FireSimulator({ tier }: { tier: ProductTier }) {
   const reduced = useReducedMotion();
   const shield = tier === "shield";
   const [fire, setFire] = useState<Direction>("W");
-  const [auto, setAuto] = useState(false);
+  const [auto, setAuto] = useState(true);
   const [phaseState, setPhase] = useState<Phase>("city");
   const [reservoirPct, setReservoirPct] = useState(94);
   const [pressureState, setPressure] = useState(0);
