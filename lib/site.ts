@@ -4,12 +4,12 @@ export const site = {
   nameSecondary: "Defense",
   url: "https://emberxdefense.com",
   description:
-    "EmberX Defense is an intelligent exterior wildfire defense system for mountain homes in Reno, Lake Tahoe, Truckee, Carson City, and Northern Nevada. Directional zone sprinklers, bio-safe retardant, and grid-independent solar power.",
+    "EmberX Defense builds exterior wildfire defense systems for mountain homes in Reno, Lake Tahoe, Truckee, Carson City, and Northern Nevada. EmberX Shield soaks the full perimeter with water; EmberX Guardian adds directional zone defense and bio-safe retardant. Solar powered, grid independent, SMS controlled.",
   shortDescription:
     "Intelligent exterior wildfire defense for mountain homes in Reno, Lake Tahoe, Truckee, and Carson City.",
   tagline: "Your home fights back when you can't.",
   heroSubhead:
-    "Embers arrive before flames. Once you evacuate, your home is on its own. EmberX deploys directional water and yard-safe retardant across your perimeter — powered by solar, independent of the grid.",
+    "Embers arrive before flames. Once you evacuate, your home is on its own. EmberX soaks your perimeter with water — or targets the fire's approach with directional zones and yard-safe retardant. Solar powered, grid independent, one SMS away.",
   region: {
     label: "Reno, Tahoe & Northern Nevada",
     caption: "Reno · Lake Tahoe · Truckee · Carson City",
@@ -20,6 +20,8 @@ export const site = {
   titleShort: "EmberX Defense | Exterior Wildfire Defense",
   keywords: [
     "EmberX Defense",
+    "EmberX Shield",
+    "EmberX Guardian",
     "wildfire defense system Reno",
     "wildfire defense Lake Tahoe",
     "wildfire defense Truckee",
@@ -36,6 +38,29 @@ export const site = {
     "Northern Nevada wildfire protection",
   ],
 } as const;
+
+export const products = {
+  shield: {
+    id: "shield",
+    name: "EmberX Shield",
+    shortName: "Shield",
+    tier: "Base",
+    tagline: "Soak the whole perimeter.",
+    summary:
+      "Pure water defense. One command deploys all four perimeter zones at once — city water first, on-site reservoir when supply fails.",
+  },
+  guardian: {
+    id: "guardian",
+    name: "EmberX Guardian",
+    shortName: "Guardian",
+    tier: "Advanced",
+    tagline: "Defend in the direction of the fire.",
+    summary:
+      "Directional zone defense with bio-safe retardant. Point the system at the fire and it concentrates water and retardant on the windward and flanking zones.",
+  },
+} as const;
+
+export type ProductTier = keyof typeof products;
 
 export const faqItems = [
   {
@@ -61,33 +86,38 @@ export const faqItems = [
   {
     question: "Does it need grid power?",
     answer:
-      "No. The controller runs on a Raspberry Pi powered by solar panels with battery backup. The system is designed to operate independently when utility power and water are disrupted.",
+      "No. The control system runs on solar panels with battery backup and takes commands over SMS. The system is designed to operate independently when utility power and water are disrupted.",
+  },
+  {
+    question: "What's the difference between EmberX Shield and EmberX Guardian?",
+    answer:
+      "EmberX Shield is the base system: pure water defense that deploys all four perimeter zones at once on a single SMS command. EmberX Guardian adds directional zone defense — it concentrates flow on the windward and flanking zones facing the fire — plus bio-safe retardant injected into the water stream. Both share the same dual water supply, solar power, and SMS control.",
   },
 ] as const;
 
 export const hardwareSpecs = [
   {
-    title: "Directional Zone Sprinklers",
+    title: "Perimeter Zone Sprinklers",
     detail:
-      "Four perimeter zones (N, E, S, W), each controlled by its own solenoid. The controller activates windward and flanking zones against the fire front — three of four zones deploy while the leeward side stays on standby.",
+      "Four perimeter zones (N, E, S, W), each controlled by its own solenoid. Shield deploys all four zones at once for full-perimeter soaking. Guardian activates the windward and flanking zones against the fire front while the leeward side stays on standby.",
     stat: "4 zones",
   },
   {
     title: "Dual Water Supply",
     detail:
-      "City main water runs first. When municipal supply is lost, the system switches to an on-site reservoir (5,000–15,000 gal) with a dedicated pump pressurizing zone lines.",
+      "City main water runs first. When municipal supply is lost, the system switches to an on-site reservoir (5,000–15,000 gal) with a dedicated pump pressurizing zone lines. Standard on both products.",
     stat: "City → Reservoir",
   },
   {
     title: "Bio-Safe Retardant",
     detail:
-      "A biodegradable, yard-safe fire retardant injects into the water stream at the mixing manifold — pre-wetting structure and defensible space without harming landscaping.",
-    stat: "Mixed at manifold",
+      "Guardian only. A biodegradable, yard-safe fire retardant injects into the water stream at the mixing manifold — pre-wetting structure and defensible space without harming landscaping.",
+    stat: "Guardian",
   },
   {
-    title: "Solar + Controller",
+    title: "Solar Control System + SMS",
     detail:
-      "Raspberry Pi controller takes the fire approach direction you set, routes flow to windward and flanking zones, and manages solenoid valves. Solar panels with battery backup — no grid dependency.",
+      "A solar-powered control system with battery backup takes your commands over SMS — deploy, set the fire direction, check status — and manages the pump and solenoid valves. No grid dependency.",
     stat: "Off-grid ready",
   },
 ] as const;

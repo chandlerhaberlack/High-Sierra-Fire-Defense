@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import type { ProductTier } from "@/lib/site";
 
 type Direction = "N" | "E" | "S" | "W";
 type Phase = "city" | "lost" | "reservoir";
+type ZoneStatus = "active" | "assist" | "standby";
 
 const DIRECTIONS: Direction[] = ["N", "E", "S", "W"];
 const OPPOSITE: Record<Direction, Direction> = { N: "S", S: "N", E: "W", W: "E" };
@@ -24,8 +26,10 @@ const SURF2 = "#252019";
 const EMBER = "#e85a24";
 const EMBER_GLOW = "#ff7a3d";
 const WATER = "#6fa8c9";
+const WATER_GLOW = "#9cc6de";
 
-function zoneState(zone: Direction, fire: Direction): "active" | "assist" | "standby" {
+function zoneState(zone: Direction, fire: Direction, tier: ProductTier): ZoneStatus {
+  if (tier === "shield") return "active";
   if (zone === fire) return "active";
   if (zone === OPPOSITE[fire]) return "standby";
   return "assist";
@@ -65,14 +69,19 @@ const SPRAY: Record<Direction, { dx: number; dy: number }[]> = {
 
 const PHASE_DURATION: Record<Phase, number> = { city: 6000, lost: 2200, reservoir: 9000 };
 
-export function FireSimulator() {
+export function FireSimulator({ tier }: { tier: ProductTier }) {
   const reduced = useReducedMotion();
+  const shield = tier === "shield";
   const [fire, setFire] = useState<Direction>("W");
   const [auto, setAuto] = useState(false);
   const [phaseState, setPhase] = useState<Phase>("city");
   const [reservoirPct, setReservoirPct] = useState(94);
   const [pressureState, setPressure] = useState(0);
   const dirIndex = useRef(3); // W
+
+  /* Accent color flips with the product: Guardian is ember, Shield is water. */
+  const ACTIVE = shield ? WATER : EMBER;
+  const ACTIVE_GLOW = shield ? WATER_GLOW : EMBER_GLOW;
 
   /* With reduced motion the sim holds a static, representative frame. */
   const phase: Phase = reduced ? "reservoir" : phaseState;
@@ -92,15 +101,15 @@ export function FireSimulator() {
     return () => clearTimeout(id);
   }, [phase, reduced]);
 
-  /* Auto-cycle fire direction */
+  /* Auto-cycle fire direction (Guardian only) */
   useEffect(() => {
-    if (!auto || reduced) return;
+    if (!auto || reduced || shield) return;
     const id = setInterval(() => {
       dirIndex.current = (dirIndex.current + 1) % 4;
       setFire(DIRECTIONS[dirIndex.current]);
     }, 8000);
     return () => clearInterval(id);
-  }, [auto, reduced]);
+  }, [auto, reduced, shield]);
 
   /* Telemetry animation */
   useEffect(() => {
@@ -119,12 +128,13 @@ export function FireSimulator() {
   }, [phase, reduced]);
 
   const activeZones = useMemo(
-    () => DIRECTIONS.filter((z) => zoneState(z, fire) !== "standby"),
-    [fire]
+    () => DIRECTIONS.filter((z) => zoneState(z, fire, tier) !== "standby"),
+    [fire, tier]
   );
 
   const onCityWater = phase === "city";
   const onReservoir = phase === "reservoir";
+  const flowing = phase !== "lost";
 
   function selectDirection(d: Direction) {
     setAuto(false);
@@ -132,49 +142,86 @@ export function FireSimulator() {
     dirIndex.current = DIRECTIONS.indexOf(d);
   }
 
+  const planLabel = shield
+    ? "Zone plan: all four zones deployed at once, soaking the full perimeter with water."
+    : `Zone plan: fire approaching from the ${DIR_LABEL[fire].toLowerCase()}. ${DIR_LABEL[fire]} zone active, flanking zones assisting, ${DIR_LABEL[OPPOSITE[fire]].toLowerCase()} zone on standby.`;
+
+  const supplyLabel = shield
+    ? "Supply chain: city water or reservoir feeds the pump, which pressurizes all four zone solenoids at once."
+    : "Supply chain: city water or reservoir feeds the mixing manifold where retardant is injected, then the pump pressurizes zone solenoids.";
+
   return (
     <div>
       {/* ── Controls ── */}
-      <div className="mb-5 flex flex-wrap items-center gap-3">
-        <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
-          Fire approaching from
-        </span>
-        <div className="flex gap-1.5" role="group" aria-label="Select fire direction">
-          {DIRECTIONS.map((d) => (
-            <button
-              key={d}
-              type="button"
-              onClick={() => selectDirection(d)}
-              aria-pressed={fire === d}
-              className={`min-w-11 border px-3 py-2.5 font-mono text-sm font-bold transition-all ${
-                fire === d
-                  ? "border-ember bg-ember/15 text-ember shadow-[0_0_16px_rgba(232,90,36,0.25)]"
-                  : "border-line bg-paper-2 text-ink-muted hover:border-ink-muted hover:text-ink"
-              }`}
+      <div className="mb-5 flex min-h-[46px] flex-wrap items-center gap-3">
+        <AnimatePresence mode="wait" initial={false}>
+          {shield ? (
+            <motion.p
+              key="shield-controls"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.25 }}
+              className="text-xs font-semibold uppercase tracking-wider text-ink-muted"
             >
-              {d}
-            </button>
-          ))}
-        </div>
-        <button
-          type="button"
-          onClick={() => setAuto((a) => !a)}
-          aria-pressed={auto}
-          className={`border px-3 py-2.5 text-xs font-medium tracking-wide transition-colors ${
-            auto
-              ? "border-ember/50 bg-ember/10 text-ember"
-              : "border-line bg-paper-2 text-ink-muted hover:text-ink"
-          }`}
-        >
-          {auto ? "Auto-cycling" : "Auto-cycle off"}
-        </button>
+              <span className="text-water">One SMS command</span> — all four zones deploy at
+              once. No aiming required.
+            </motion.p>
+          ) : (
+            <motion.div
+              key="guardian-controls"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.25 }}
+              className="flex flex-wrap items-center gap-3"
+            >
+              <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
+                Fire approaching from
+              </span>
+              <div className="flex gap-1.5" role="group" aria-label="Select fire direction">
+                {DIRECTIONS.map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    onClick={() => selectDirection(d)}
+                    aria-pressed={fire === d}
+                    className={`min-w-11 border px-3 py-2.5 font-mono text-sm font-bold transition-all ${
+                      fire === d
+                        ? "border-ember bg-ember/15 text-ember shadow-[0_0_16px_rgba(232,90,36,0.25)]"
+                        : "border-line bg-paper-2 text-ink-muted hover:border-ink-muted hover:text-ink"
+                    }`}
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => setAuto((a) => !a)}
+                aria-pressed={auto}
+                className={`border px-3 py-2.5 text-xs font-medium tracking-wide transition-colors ${
+                  auto
+                    ? "border-ember/50 bg-ember/10 text-ember"
+                    : "border-line bg-paper-2 text-ink-muted hover:text-ink"
+                }`}
+              >
+                {auto ? "Auto-cycling" : "Auto-cycle off"}
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
         {/* ══ LEFT: Zone plan (top view) ══ */}
         <div className="plate-glow relative overflow-hidden">
           <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
-            <span className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-ember">
+            <span
+              className={`font-mono text-[0.65rem] font-semibold uppercase tracking-[0.15em] ${
+                shield ? "text-water" : "text-ember"
+              }`}
+            >
               Zone Plan — Top View
             </span>
             <span className="flex items-center gap-2 font-mono text-[0.65rem] uppercase tracking-wider text-ink-muted">
@@ -183,21 +230,16 @@ export function FireSimulator() {
             </span>
           </div>
 
-          <svg
-            viewBox="0 0 420 420"
-            className="w-full"
-            role="img"
-            aria-label={`Zone plan: fire approaching from the ${DIR_LABEL[fire].toLowerCase()}. ${DIR_LABEL[fire]} zone active, flanking zones assisting, ${DIR_LABEL[OPPOSITE[fire]].toLowerCase()} zone on standby.`}
-          >
+          <svg viewBox="0 0 420 420" className="w-full" role="img" aria-label={planLabel}>
             <rect width="420" height="420" fill={SURF} />
 
-            {/* Fire glow bleeding in from the approach direction */}
+            {/* Fire glow bleeding in from the approach direction (Guardian only) */}
             <motion.rect
               key={`glow-${fire}`}
               width="420"
               height="420"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              animate={{ opacity: shield ? 0 : 1 }}
               transition={{ duration: 1.2 }}
               fill={`url(#fireGlow-${fire})`}
             />
@@ -221,9 +263,9 @@ export function FireSimulator() {
 
             {/* Zones */}
             {DIRECTIONS.map((z) => {
-              const st = zoneState(z, fire);
+              const st = zoneState(z, fire, tier);
               const r = ZONES[z];
-              const stroke = st === "active" ? EMBER : st === "assist" ? INK : MUTED;
+              const stroke = st === "active" ? ACTIVE : st === "assist" ? INK : MUTED;
               const dash = st === "active" ? "" : st === "assist" ? "6 3" : "3 5";
               return (
                 <g key={z}>
@@ -232,7 +274,7 @@ export function FireSimulator() {
                     y={r.y}
                     width={r.w}
                     height={r.h}
-                    fill={st === "active" ? EMBER : "none"}
+                    fill={st === "active" ? ACTIVE : "none"}
                     stroke={stroke}
                     strokeDasharray={dash}
                     animate={{
@@ -250,7 +292,7 @@ export function FireSimulator() {
                     x={r.lx}
                     y={r.ly - 6}
                     textAnchor="middle"
-                    fill={st === "active" ? EMBER : st === "assist" ? INK : MUTED}
+                    fill={st === "active" ? ACTIVE : st === "assist" ? INK : MUTED}
                     fontSize="13"
                     fontFamily="monospace"
                     fontWeight="700"
@@ -261,12 +303,12 @@ export function FireSimulator() {
                     x={r.lx}
                     y={r.ly + 8}
                     textAnchor="middle"
-                    fill={st === "active" ? EMBER : MUTED}
+                    fill={st === "active" ? ACTIVE : MUTED}
                     fontSize="7"
                     fontFamily="monospace"
                     letterSpacing="1"
                   >
-                    {st.toUpperCase()}
+                    {shield ? "DEPLOYED" : st.toUpperCase()}
                   </text>
 
                   {/* Sprinklers + spray */}
@@ -276,7 +318,7 @@ export function FireSimulator() {
                         cx={s.x}
                         cy={s.y}
                         r={st === "standby" ? 2.5 : 3.2}
-                        fill={st === "active" ? EMBER : st === "assist" ? INK : "none"}
+                        fill={st === "active" ? ACTIVE : st === "assist" ? INK : "none"}
                         stroke={st === "standby" ? MUTED : "none"}
                         strokeWidth="1"
                         opacity={st === "standby" ? 0.5 : 0.9}
@@ -289,7 +331,7 @@ export function FireSimulator() {
                             y1={s.y}
                             x2={s.x + sp.dx}
                             y2={s.y + sp.dy}
-                            stroke={st === "active" ? EMBER_GLOW : WATER}
+                            stroke={st === "active" ? WATER_GLOW : WATER}
                             strokeWidth={st === "active" ? 1.4 : 1}
                             animate={{ opacity: [0.2, 0.85, 0.2] }}
                             transition={{
@@ -314,39 +356,41 @@ export function FireSimulator() {
               PROTECTED
             </text>
 
-            {/* Fire front arrow */}
+            {/* Fire front arrow (Guardian only) */}
             <AnimatePresence mode="wait">
-              <motion.g
-                key={fire}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <motion.line
-                  x1={FIRE_ARROWS[fire].x1}
-                  y1={FIRE_ARROWS[fire].y1}
-                  x2={FIRE_ARROWS[fire].x2}
-                  y2={FIRE_ARROWS[fire].y2}
-                  stroke={EMBER}
-                  strokeWidth="3"
-                  markerEnd="url(#fireArrow)"
-                  animate={{ opacity: [0.6, 1, 0.6] }}
-                  transition={{ repeat: Infinity, duration: 1.6 }}
-                />
-                <text
-                  x={FIRE_ARROWS[fire].tx}
-                  y={FIRE_ARROWS[fire].ty}
-                  textAnchor="middle"
-                  fill={EMBER}
-                  fontSize="8"
-                  fontFamily="monospace"
-                  fontWeight="700"
-                  letterSpacing="1.5"
+              {!shield && (
+                <motion.g
+                  key={fire}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
                 >
-                  FIRE
-                </text>
-              </motion.g>
+                  <motion.line
+                    x1={FIRE_ARROWS[fire].x1}
+                    y1={FIRE_ARROWS[fire].y1}
+                    x2={FIRE_ARROWS[fire].x2}
+                    y2={FIRE_ARROWS[fire].y2}
+                    stroke={EMBER}
+                    strokeWidth="3"
+                    markerEnd="url(#fireArrow)"
+                    animate={{ opacity: [0.6, 1, 0.6] }}
+                    transition={{ repeat: Infinity, duration: 1.6 }}
+                  />
+                  <text
+                    x={FIRE_ARROWS[fire].tx}
+                    y={FIRE_ARROWS[fire].ty}
+                    textAnchor="middle"
+                    fill={EMBER}
+                    fontSize="8"
+                    fontFamily="monospace"
+                    fontWeight="700"
+                    letterSpacing="1.5"
+                  >
+                    FIRE
+                  </text>
+                </motion.g>
+              )}
             </AnimatePresence>
             <defs>
               <marker id="fireArrow" markerWidth="8" markerHeight="8" refX="6" refY="3.5" orient="auto">
@@ -369,7 +413,11 @@ export function FireSimulator() {
         <div className="flex flex-col gap-4">
           <div className="plate-glow flex-1 overflow-hidden">
             <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
-              <span className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-ember">
+              <span
+                className={`font-mono text-[0.65rem] font-semibold uppercase tracking-[0.15em] ${
+                  shield ? "text-water" : "text-ember"
+                }`}
+              >
                 Supply + Control
               </span>
               <AnimatePresence mode="wait">
@@ -387,7 +435,7 @@ export function FireSimulator() {
               </AnimatePresence>
             </div>
 
-            <svg viewBox="0 0 340 380" className="w-full" role="img" aria-label="Supply chain: city water or reservoir feeds the mixing manifold where retardant is injected, then the pump pressurizes zone solenoids.">
+            <svg viewBox="0 0 340 380" className="w-full" role="img" aria-label={supplyLabel}>
               <rect width="340" height="380" fill={SURF} />
 
               {/* City main */}
@@ -395,37 +443,57 @@ export function FireSimulator() {
               {/* Reservoir */}
               <SupplyBox x={182} y={16} w={140} h={44} label="RESERVOIR" sub={`${Math.round(reservoirPct)}% · 5–15k gal`} active={onReservoir} />
 
-              {/* Feed lines into manifold */}
+              {/* Feed lines into manifold junction */}
               <path d="M88 60 V 88 H 165" fill="none" stroke={onCityWater ? WATER : LINE} strokeWidth={onCityWater ? 2 : 1.2} className={onCityWater ? "flow-line" : undefined} />
               <path d="M252 60 V 88 H 175" fill="none" stroke={onReservoir ? WATER : LINE} strokeWidth={onReservoir ? 2 : 1.2} className={onReservoir ? "flow-line" : undefined} />
-              <line x1="170" y1="88" x2="170" y2="106" stroke={phase === "lost" ? LINE : WATER} strokeWidth={phase === "lost" ? 1.2 : 2} className={phase !== "lost" ? "flow-line" : undefined} />
 
-              {/* Retardant tank (side inject) */}
-              <rect x="18" y="106" width="92" height="40" fill={SURF2} stroke={EMBER} strokeWidth="1.3" />
-              <text x="64" y="123" textAnchor="middle" fill={EMBER} fontSize="8.5" fontFamily="monospace" fontWeight="600">RETARDANT</text>
-              <text x="64" y="136" textAnchor="middle" fill={MUTED} fontSize="6.5" fontFamily="monospace">bio-safe · yard-safe</text>
-              <line x1="110" y1="126" x2="128" y2="126" stroke={phase !== "lost" ? EMBER : LINE} strokeWidth={phase !== "lost" ? 2 : 1.2} className={phase !== "lost" ? "flow-line" : undefined} />
+              {/* Shield bypass: straight from supply junction to the pump, no retardant */}
+              <motion.path
+                d="M170 88 V 148 H 198 V 168"
+                fill="none"
+                stroke={flowing ? WATER : LINE}
+                strokeWidth={flowing ? 2 : 1.2}
+                className={shield && flowing ? "flow-line" : undefined}
+                initial={false}
+                animate={{ opacity: shield ? 1 : 0 }}
+                transition={{ duration: 0.4 }}
+              />
 
-              {/* Mixing manifold */}
-              <rect x="128" y="106" width="140" height="40" fill={SURF2} stroke={LINE} strokeWidth="1.2" />
-              <text x="198" y="123" textAnchor="middle" fill={INK} fontSize="8.5" fontFamily="monospace" fontWeight="600">MIXING MANIFOLD</text>
-              <text x="198" y="136" textAnchor="middle" fill={MUTED} fontSize="6.5" fontFamily="monospace">venturi injection</text>
+              {/* Guardian: retardant injection + mixing manifold */}
+              <motion.g initial={false} animate={{ opacity: shield ? 0 : 1 }} transition={{ duration: 0.4 }}>
+                <line x1="170" y1="88" x2="170" y2="106" stroke={flowing ? WATER : LINE} strokeWidth={flowing ? 2 : 1.2} className={!shield && flowing ? "flow-line" : undefined} />
 
-              <line x1="198" y1="146" x2="198" y2="168" stroke={phase !== "lost" ? EMBER_GLOW : LINE} strokeWidth={phase !== "lost" ? 2 : 1.2} className={phase !== "lost" ? "flow-line" : undefined} />
+                {/* Retardant tank (side inject) */}
+                <rect x="18" y="106" width="92" height="40" fill={SURF2} stroke={EMBER} strokeWidth="1.3" />
+                <text x="64" y="123" textAnchor="middle" fill={EMBER} fontSize="8.5" fontFamily="monospace" fontWeight="600">RETARDANT</text>
+                <text x="64" y="136" textAnchor="middle" fill={MUTED} fontSize="6.5" fontFamily="monospace">bio-safe · yard-safe</text>
+                <line x1="110" y1="126" x2="128" y2="126" stroke={flowing ? EMBER : LINE} strokeWidth={flowing ? 2 : 1.2} className={!shield && flowing ? "flow-line" : undefined} />
+
+                {/* Mixing manifold */}
+                <rect x="128" y="106" width="140" height="40" fill={SURF2} stroke={LINE} strokeWidth="1.2" />
+                <text x="198" y="123" textAnchor="middle" fill={INK} fontSize="8.5" fontFamily="monospace" fontWeight="600">MIXING MANIFOLD</text>
+                <text x="198" y="136" textAnchor="middle" fill={MUTED} fontSize="6.5" fontFamily="monospace">venturi injection</text>
+
+                <line x1="198" y1="146" x2="198" y2="168" stroke={flowing ? EMBER_GLOW : LINE} strokeWidth={flowing ? 2 : 1.2} className={!shield && flowing ? "flow-line" : undefined} />
+              </motion.g>
 
               {/* Pump */}
-              <rect x="128" y="168" width="140" height="40" fill={SURF2} stroke={onReservoir ? EMBER : LINE} strokeWidth={onReservoir ? 1.6 : 1.2} />
-              <text x="198" y="185" textAnchor="middle" fill={onReservoir ? EMBER : INK} fontSize="8.5" fontFamily="monospace" fontWeight="600">
+              <rect x="128" y="168" width="140" height="40" fill={SURF2} stroke={onReservoir ? ACTIVE : LINE} strokeWidth={onReservoir ? 1.6 : 1.2} />
+              <text x="198" y="185" textAnchor="middle" fill={onReservoir ? ACTIVE : INK} fontSize="8.5" fontFamily="monospace" fontWeight="600">
                 PUMP {onReservoir ? "· RUNNING" : "· STANDBY"}
               </text>
               <text x="198" y="198" textAnchor="middle" fill={MUTED} fontSize="6.5" fontFamily="monospace">pressurizes zone lines</text>
 
-              <line x1="198" y1="208" x2="198" y2="230" stroke={phase !== "lost" ? EMBER_GLOW : LINE} strokeWidth={phase !== "lost" ? 2 : 1.2} className={phase !== "lost" ? "flow-line" : undefined} />
+              <line x1="198" y1="208" x2="198" y2="230" stroke={flowing ? (shield ? WATER : EMBER_GLOW) : LINE} strokeWidth={flowing ? 2 : 1.2} className={flowing ? "flow-line" : undefined} />
 
-              {/* Controller */}
+              {/* Control system */}
               <rect x="88" y="230" width="220" height="48" fill={SURF2} stroke={EMBER} strokeWidth="1.8" />
-              <text x="198" y="249" textAnchor="middle" fill={EMBER} fontSize="9" fontFamily="monospace" fontWeight="700">CONTROLLER · RASPBERRY PI</text>
-              <text x="198" y="262" textAnchor="middle" fill={MUTED} fontSize="6.5" fontFamily="monospace">solar powered · user-set bearing · zone routing</text>
+              <text x="198" y="249" textAnchor="middle" fill={EMBER} fontSize="9" fontFamily="monospace" fontWeight="700">CONTROL SYSTEM · SMS</text>
+              <text x="198" y="262" textAnchor="middle" fill={MUTED} fontSize="6.5" fontFamily="monospace">
+                {shield
+                  ? "solar powered · SMS command · all-zone deploy"
+                  : "solar powered · SMS command · zone routing"}
+              </text>
               <circle cx="100" cy="242" r="3" fill={EMBER_GLOW}>
                 <animate attributeName="opacity" values="1;0.3;1" dur="1.8s" repeatCount="indefinite" />
               </circle>
@@ -435,7 +503,7 @@ export function FireSimulator() {
 
               {/* Solenoids */}
               {DIRECTIONS.map((z, i) => {
-                const st = zoneState(z, fire);
+                const st = zoneState(z, fire, tier);
                 const open = st !== "standby" && phase !== "lost";
                 const bx = 60 + i * 72;
                 return (
@@ -446,15 +514,15 @@ export function FireSimulator() {
                       y={306}
                       width={56}
                       height={52}
-                      fill={open ? EMBER : SURF2}
-                      stroke={open ? EMBER : LINE}
+                      fill={open ? ACTIVE : SURF2}
+                      stroke={open ? ACTIVE : LINE}
                       animate={{ fillOpacity: open ? 0.14 : 1, strokeWidth: open ? 1.8 : 1 }}
                       transition={{ duration: 0.4 }}
                     />
-                    <text x={bx + 28} y={328} textAnchor="middle" fill={open ? EMBER : INK} fontSize="12" fontFamily="monospace" fontWeight="700">
+                    <text x={bx + 28} y={328} textAnchor="middle" fill={open ? ACTIVE : INK} fontSize="12" fontFamily="monospace" fontWeight="700">
                       {z}
                     </text>
-                    <text x={bx + 28} y={345} textAnchor="middle" fill={open ? EMBER_GLOW : MUTED} fontSize="6.5" fontFamily="monospace" fontWeight="600">
+                    <text x={bx + 28} y={345} textAnchor="middle" fill={open ? ACTIVE_GLOW : MUTED} fontSize="6.5" fontFamily="monospace" fontWeight="600">
                       {open ? "OPEN" : "READY"}
                     </text>
                   </g>
@@ -473,7 +541,9 @@ export function FireSimulator() {
       </div>
 
       <p className="mt-3 text-[0.6875rem] uppercase tracking-[0.15em] text-ink-muted">
-        Fig. 01 — Interactive simulation (concept). Tap a direction to redeploy zones.
+        {shield
+          ? "Fig. 01 — Interactive simulation (concept). Shield deploys every zone at once."
+          : "Fig. 01 — Interactive simulation (concept). Tap a direction to redeploy zones."}
       </p>
     </div>
   );

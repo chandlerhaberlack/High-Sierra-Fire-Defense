@@ -14,6 +14,8 @@
   --ember-hover:#c94b1f;
   --ember-dim:  rgba(232, 90, 36, 0.12);
   --pulse:      #f0a23c;
+  --water:      #6fa8c9;
+  --water-dim:  rgba(111, 168, 201, 0.12);
 }
 
 @theme inline {
@@ -29,6 +31,8 @@
   --color-ember-hover: var(--ember-hover);
   --color-ember-dim:   var(--ember-dim);
   --color-pulse:       var(--pulse);
+  --color-water:       var(--water);
+  --color-water-dim:   var(--water-dim);
   --font-sans:         var(--font-inter);
   --font-display:      var(--font-fraunces);
 }

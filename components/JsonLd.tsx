@@ -1,4 +1,4 @@
-import { site, faqItems } from "@/lib/site";
+import { site, faqItems, products } from "@/lib/site";
 
 const areaServed = [
   { "@type": "City", name: "Reno", containedInPlace: { "@type": "State", name: "Nevada" } },
@@ -35,6 +35,18 @@ export function JsonLd() {
     description: site.description,
     provider: { "@type": "Organization", name: site.name, url: site.url },
     areaServed,
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "EmberX product line",
+      itemListElement: Object.values(products).map((p) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Product",
+          name: p.name,
+          description: p.summary,
+        },
+      })),
+    },
     availableChannel: {
       "@type": "ServiceChannel",
       serviceUrl: `${site.url}/#signup`,
