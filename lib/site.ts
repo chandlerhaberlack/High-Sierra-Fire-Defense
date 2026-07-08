@@ -56,7 +56,7 @@ export const products = {
     tier: "Advanced",
     tagline: "Defend in the direction of the fire.",
     summary:
-      "Directional zone defense with bio-safe retardant. Point the system at the fire and it concentrates water and retardant on the windward and flanking zones.",
+      "Directional zone defense with bio-safe retardant. Point the system at the fire and it concentrates water and retardant on the windward and flanking zones, while the standby zone cycles on for 1 minute every 10 minutes.",
   },
 } as const;
 
@@ -91,7 +91,7 @@ export const faqItems = [
   {
     question: "What's the difference between EmberX Shield and EmberX Guardian?",
     answer:
-      "EmberX Shield is the base system: pure water defense that deploys all four perimeter zones at once on a single SMS command. EmberX Guardian adds directional zone defense — it concentrates flow on the windward and flanking zones facing the fire — plus bio-safe retardant injected into the water stream. Both share the same dual water supply, solar power, and SMS control.",
+      "EmberX Shield is the base system: pure water defense that deploys all four perimeter zones at once on a single SMS command. EmberX Guardian adds directional zone defense — it concentrates flow on the windward and flanking zones facing the fire — plus bio-safe retardant injected into the water stream. Guardian's standby zone still cycles on for 1 minute every 10 minutes by default; you can adjust that interval or run all four zones simultaneously. Both share the same dual water supply, solar power, and SMS control.",
   },
 ] as const;
 
@@ -99,7 +99,7 @@ export const hardwareSpecs = [
   {
     title: "Perimeter Zone Sprinklers",
     detail:
-      "Four perimeter zones (N, E, S, W), each controlled by its own solenoid. Shield deploys all four zones at once for full-perimeter soaking. Guardian activates the windward and flanking zones against the fire front while the leeward side stays on standby.",
+      "Four perimeter zones (N, E, S, W), each controlled by its own solenoid. Shield deploys all four zones at once for full-perimeter soaking. Guardian concentrates on the windward and flanking zones while the standby zone cycles on for 1 minute every 10 minutes — adjust the timing or run all four at once.",
     stat: "4 zones",
   },
   {

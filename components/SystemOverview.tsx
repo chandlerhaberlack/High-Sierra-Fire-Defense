@@ -47,7 +47,7 @@ const copy: Record<
       {
         n: "B",
         title: "Three zones deploy",
-        copy: "Windward and flanking zones open; the leeward zone holds in reserve. Water is never wasted on the safe side.",
+        copy: "Windward and flanking zones open; the leeward zone holds in reserve, cycling on for 1 minute every 10 minutes by default. Adjust the timing — or run all four zones at once.",
       },
       {
         n: "C",

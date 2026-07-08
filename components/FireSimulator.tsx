@@ -6,7 +6,7 @@ import type { ProductTier } from "@/lib/site";
 
 type Direction = "N" | "E" | "S" | "W";
 type Phase = "city" | "lost" | "reservoir";
-type ZoneStatus = "active" | "assist" | "standby";
+type ZoneStatus = "active" | "assist" | "standby" | "cycling";
 
 const DIRECTIONS: Direction[] = ["N", "E", "S", "W"];
 const OPPOSITE: Record<Direction, Direction> = { N: "S", S: "N", E: "W", W: "E" };
@@ -69,6 +69,10 @@ const SPRAY: Record<Direction, { dx: number; dy: number }[]> = {
 
 const PHASE_DURATION: Record<Phase, number> = { city: 6000, lost: 2200, reservoir: 9000 };
 
+/* Guardian standby-zone cycle (default: 1 min on every 10 min), compressed for the demo. */
+const PULSE_EVERY = 12000;
+const PULSE_FOR = 3000;
+
 export function FireSimulator({ tier }: { tier: ProductTier }) {
   const reduced = useReducedMotion();
   const shield = tier === "shield";
@@ -77,6 +81,7 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
   const [phaseState, setPhase] = useState<Phase>("city");
   const [reservoirPct, setReservoirPct] = useState(94);
   const [pressureState, setPressure] = useState(0);
+  const [pulsing, setPulsing] = useState(false);
   const dirIndex = useRef(3); // W
 
   /* Accent color flips with the product: Guardian is ember, Shield is water. */
@@ -100,6 +105,21 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
     }, PHASE_DURATION[phase]);
     return () => clearTimeout(id);
   }, [phase, reduced]);
+
+  /* Standby-zone cycle (Guardian only): the leeward zone turns on briefly on a loop. */
+  useEffect(() => {
+    if (reduced || shield) return;
+    let off: ReturnType<typeof setTimeout>;
+    const id = setInterval(() => {
+      setPulsing(true);
+      off = setTimeout(() => setPulsing(false), PULSE_FOR);
+    }, PULSE_EVERY);
+    return () => {
+      clearInterval(id);
+      clearTimeout(off);
+      setPulsing(false);
+    };
+  }, [reduced, shield]);
 
   /* Auto-cycle fire direction (Guardian only) */
   useEffect(() => {
@@ -127,14 +147,23 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
     return () => clearInterval(id);
   }, [phase, reduced]);
 
-  const activeZones = useMemo(
-    () => DIRECTIONS.filter((z) => zoneState(z, fire, tier) !== "standby"),
-    [fire, tier]
-  );
-
   const onCityWater = phase === "city";
   const onReservoir = phase === "reservoir";
   const flowing = phase !== "lost";
+
+  /* Standby flips to "cycling" while the pulse timer is on (never during supply loss). */
+  const cycleOn = pulsing && !shield && flowing;
+  const effectiveState = useMemo(() => {
+    return (z: Direction): ZoneStatus => {
+      const st = zoneState(z, fire, tier);
+      return st === "standby" && cycleOn ? "cycling" : st;
+    };
+  }, [fire, tier, cycleOn]);
+
+  const activeZones = useMemo(
+    () => DIRECTIONS.filter((z) => effectiveState(z) !== "standby"),
+    [effectiveState]
+  );
 
   function selectDirection(d: Direction) {
     setAuto(false);
@@ -144,7 +173,7 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
 
   const planLabel = shield
     ? "Zone plan: all four zones deployed at once, soaking the full perimeter with water."
-    : `Zone plan: fire approaching from the ${DIR_LABEL[fire].toLowerCase()}. ${DIR_LABEL[fire]} zone active, flanking zones assisting, ${DIR_LABEL[OPPOSITE[fire]].toLowerCase()} zone on standby.`;
+    : `Zone plan: fire approaching from the ${DIR_LABEL[fire].toLowerCase()}. ${DIR_LABEL[fire]} zone active, flanking zones assisting, ${DIR_LABEL[OPPOSITE[fire]].toLowerCase()} zone on standby, cycling on for one minute every ten minutes.`;
 
   const supplyLabel = shield
     ? "Supply chain: city water or reservoir feeds the pump, which pressurizes all four zone solenoids at once."
@@ -263,10 +292,11 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
 
             {/* Zones */}
             {DIRECTIONS.map((z) => {
-              const st = zoneState(z, fire, tier);
+              const st = effectiveState(z);
               const r = ZONES[z];
-              const stroke = st === "active" ? ACTIVE : st === "assist" ? INK : MUTED;
-              const dash = st === "active" ? "" : st === "assist" ? "6 3" : "3 5";
+              const stroke =
+                st === "active" ? ACTIVE : st === "cycling" ? WATER : st === "assist" ? INK : MUTED;
+              const dash = st === "active" || st === "cycling" ? "" : st === "assist" ? "6 3" : "3 5";
               return (
                 <g key={z}>
                   <motion.rect
@@ -274,12 +304,12 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
                     y={r.y}
                     width={r.w}
                     height={r.h}
-                    fill={st === "active" ? ACTIVE : "none"}
+                    fill={st === "active" ? ACTIVE : st === "cycling" ? WATER : "none"}
                     stroke={stroke}
                     strokeDasharray={dash}
                     animate={{
-                      fillOpacity: st === "active" ? [0.1, 0.2, 0.1] : 0,
-                      strokeWidth: st === "active" ? 2 : st === "assist" ? 1.3 : 1,
+                      fillOpacity: st === "active" ? [0.1, 0.2, 0.1] : st === "cycling" ? 0.12 : 0,
+                      strokeWidth: st === "active" ? 2 : st === "assist" || st === "cycling" ? 1.3 : 1,
                       strokeOpacity: st === "standby" ? 0.5 : 1,
                     }}
                     transition={
@@ -292,7 +322,7 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
                     x={r.lx}
                     y={r.ly - 6}
                     textAnchor="middle"
-                    fill={st === "active" ? ACTIVE : st === "assist" ? INK : MUTED}
+                    fill={st === "active" ? ACTIVE : st === "cycling" ? WATER : st === "assist" ? INK : MUTED}
                     fontSize="13"
                     fontFamily="monospace"
                     fontWeight="700"
@@ -303,7 +333,7 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
                     x={r.lx}
                     y={r.ly + 8}
                     textAnchor="middle"
-                    fill={st === "active" ? ACTIVE : MUTED}
+                    fill={st === "active" ? ACTIVE : st === "cycling" ? WATER : MUTED}
                     fontSize="7"
                     fontFamily="monospace"
                     letterSpacing="1"
@@ -318,7 +348,9 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
                         cx={s.x}
                         cy={s.y}
                         r={st === "standby" ? 2.5 : 3.2}
-                        fill={st === "active" ? ACTIVE : st === "assist" ? INK : "none"}
+                        fill={
+                          st === "active" ? ACTIVE : st === "cycling" ? WATER : st === "assist" ? INK : "none"
+                        }
                         stroke={st === "standby" ? MUTED : "none"}
                         strokeWidth="1"
                         opacity={st === "standby" ? 0.5 : 0.9}
@@ -503,8 +535,10 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
 
               {/* Solenoids */}
               {DIRECTIONS.map((z, i) => {
-                const st = zoneState(z, fire, tier);
+                const st = effectiveState(z);
                 const open = st !== "standby" && phase !== "lost";
+                const accent = st === "cycling" ? WATER : ACTIVE;
+                const accentGlow = st === "cycling" ? WATER_GLOW : ACTIVE_GLOW;
                 const bx = 60 + i * 72;
                 return (
                   <g key={z}>
@@ -514,16 +548,16 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
                       y={306}
                       width={56}
                       height={52}
-                      fill={open ? ACTIVE : SURF2}
-                      stroke={open ? ACTIVE : LINE}
+                      fill={open ? accent : SURF2}
+                      stroke={open ? accent : LINE}
                       animate={{ fillOpacity: open ? 0.14 : 1, strokeWidth: open ? 1.8 : 1 }}
                       transition={{ duration: 0.4 }}
                     />
-                    <text x={bx + 28} y={328} textAnchor="middle" fill={open ? ACTIVE : INK} fontSize="12" fontFamily="monospace" fontWeight="700">
+                    <text x={bx + 28} y={328} textAnchor="middle" fill={open ? accent : INK} fontSize="12" fontFamily="monospace" fontWeight="700">
                       {z}
                     </text>
-                    <text x={bx + 28} y={345} textAnchor="middle" fill={open ? ACTIVE_GLOW : MUTED} fontSize="6.5" fontFamily="monospace" fontWeight="600">
-                      {open ? "OPEN" : "READY"}
+                    <text x={bx + 28} y={345} textAnchor="middle" fill={open ? accentGlow : MUTED} fontSize="6.5" fontFamily="monospace" fontWeight="600">
+                      {open ? (st === "cycling" ? "CYCLE" : "OPEN") : "READY"}
                     </text>
                   </g>
                 );
@@ -543,7 +577,7 @@ export function FireSimulator({ tier }: { tier: ProductTier }) {
       <p className="mt-3 text-[0.6875rem] uppercase tracking-[0.15em] text-ink-muted">
         {shield
           ? "Fig. 01 — Interactive simulation (concept). Shield deploys every zone at once."
-          : "Fig. 01 — Interactive simulation (concept). Tap a direction to redeploy zones."}
+          : "Fig. 01 — Interactive simulation (concept). Tap a direction to redeploy zones. Standby zone cycles on 1 min every 10 min — accelerated here."}
       </p>
     </div>
   );
