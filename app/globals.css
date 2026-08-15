@@ -16,6 +16,10 @@
   --pulse:      #f0a23c;
   --water:      #6fa8c9;
   --water-dim:  rgba(111, 168, 201, 0.12);
+  /* Readiness-level colors: green = standby, yellow = armed, red = critical/detected */
+  --lv1:        #7ea87a;
+  --lv2:        #d9b23c;
+  --lv3:        #d94f4f;
 }
 
 @theme inline {
@@ -33,6 +37,9 @@
   --color-pulse:       var(--pulse);
   --color-water:       var(--water);
   --color-water-dim:   var(--water-dim);
+  --color-lv1:         var(--lv1);
+  --color-lv2:         var(--lv2);
+  --color-lv3:         var(--lv3);
   --font-sans:         var(--font-inter);
   --font-display:      var(--font-fraunces);
 }

@@ -11,7 +11,7 @@ export function Hardware() {
       </h2>
       <p className="mt-4 max-w-2xl leading-relaxed text-ink-muted">
         Every component is chosen to keep working when everything else fails —
-        power outages, water shutoffs, evacuation orders.
+        power outages, dead cell towers, downed internet, evacuation orders.
       </p>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2">

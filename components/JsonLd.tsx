@@ -1,4 +1,4 @@
-import { site, faqItems, products } from "@/lib/site";
+import { site, faqItems, system } from "@/lib/site";
 
 const areaServed = [
   { "@type": "City", name: "Reno", containedInPlace: { "@type": "State", name: "Nevada" } },
@@ -19,11 +19,12 @@ export function JsonLd() {
     areaServed,
     knowsAbout: [
       "Wildfire defense",
-      "Exterior wildfire sprinkler systems",
+      "Wildfire detection systems",
+      "Thermal fire detection",
       "Home wildfire protection",
       "Wildfire mitigation",
-      "Defensible space water systems",
       "Fire retardant home defense",
+      "Exterior retardant sprinkler systems",
     ],
   };
 
@@ -38,14 +39,16 @@ export function JsonLd() {
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "EmberX product line",
-      itemListElement: Object.values(products).map((p) => ({
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Product",
-          name: p.name,
-          description: p.summary,
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Product",
+            name: system.name,
+            description: system.summary,
+          },
         },
-      })),
+      ],
     },
     availableChannel: {
       "@type": "ServiceChannel",
@@ -61,7 +64,7 @@ export function JsonLd() {
     description: `${site.shortDescription} Join the early access list.`,
     about: {
       "@type": "Thing",
-      name: "Residential wildfire mitigation and exterior pre-wetting systems",
+      name: "Residential wildfire detection and retardant deployment systems",
     },
   };
 

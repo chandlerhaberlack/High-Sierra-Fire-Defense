@@ -10,7 +10,8 @@ export function Footer() {
           <div>
             <Logo />
             <p className="mt-3 text-sm text-ink-muted">
-              Exterior wildfire defense for mountain homes — concept in development.
+              Autonomous wildfire detection and retardant defense for mountain
+              homes — concept in development.
             </p>
             <p className="mt-1 text-sm text-ink-muted">
               {site.region.places.join(" · ")}
@@ -29,10 +30,10 @@ export function Footer() {
 
         <p className="max-w-3xl text-xs leading-relaxed text-ink-muted">
           <strong className="text-ink">Disclaimer:</strong> This system is intended
-          to support wildfire mitigation and exterior pre-wetting. It does not
-          guarantee structure survival and is not a replacement for defensible
-          space, home hardening, evacuation planning, or guidance from fire
-          professionals.
+          to support wildfire mitigation through early detection and exterior
+          retardant deployment. It does not guarantee structure survival and is
+          not a replacement for defensible space, home hardening, evacuation
+          planning, or guidance from fire professionals.
         </p>
         <p className="mt-4 text-xs text-ink-muted/70">
           © {new Date().getFullYear()} {site.name}.
