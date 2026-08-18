@@ -28,6 +28,10 @@ export function Hero() {
             {site.tagline}
           </h1>
 
+          <p className="mt-5 max-w-2xl font-display text-xl italic leading-snug text-ember sm:text-2xl">
+            {site.heroClaim}
+          </p>
+
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
             {site.heroSubhead}
           </p>

@@ -8,6 +8,7 @@ export const site = {
   shortDescription:
     "Autonomous wildfire detection and retardant deployment for mountain homes in Reno, Lake Tahoe, Truckee, and Carson City.",
   tagline: "Your home fights back when you can't.",
+  heroClaim: "The most advanced wildfire detection ever built for a home.",
   heroSubhead:
     "Embers arrive before flames. Once you evacuate, your home is on its own. EmberX watches with three layers of fire detection, arms itself as evacuation orders escalate, and coats your perimeter in bio-safe retardant the moment fire reaches your property — on its own power, with every alert sent straight to your phone.",
   region: {
